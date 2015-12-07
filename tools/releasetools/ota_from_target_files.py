@@ -582,6 +582,9 @@ reboot_now("%(bcb_dev)s", "recovery");
 else if get_stage("%(bcb_dev)s") == "3/3" then
 """ % bcb_dev)
 
+  script.AppendExtra("ifelse(is_mounted(\"/system\"), unmount(\"/system\"));")
+  device_specific.FullOTA_InstallBegin()
+  
   # Dump fingerprints
     model = GetBuildProp("ro.product.model", OPTIONS.info_dict)
     build = GetBuildProp("ro.build.date", OPTIONS.info_dict)
@@ -591,9 +594,6 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     script.Print("*     Compiled: %s *"%(build));
     script.Print("******************************************");
 
-  script.AppendExtra("ifelse(is_mounted(\"/system\"), unmount(\"/system\"));")
-  device_specific.FullOTA_InstallBegin()
-  
   if OPTIONS.backuptool:
     if block_based:
       common.ZipWriteStr(output_zip, "system/bin/backuptool.sh",
